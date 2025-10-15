@@ -35,7 +35,7 @@ export function Billing({ onNavigate }: BillingProps) {
     fullName: "",
     email: "",
     phone: "",
-    discordId: ""
+    Password of Pterodactyl Panel: ""
   });
 
   // UPI Payment Details
