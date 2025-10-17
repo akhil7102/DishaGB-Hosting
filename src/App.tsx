@@ -22,7 +22,6 @@ import { AcceptableUse } from "./pages/AcceptableUse";
 import { CartProvider } from "./components/CartContext";
 import { MetaTags } from "./components/MetaTags";
 import { ContactSalesModal } from "./components/ContactSalesModal";
-
 import { Toaster } from "./components/ui/sonner";
 
 export default function App() {
@@ -32,31 +31,41 @@ export default function App() {
   const [orderDetails, setOrderDetails] = useState<any>(null);
   const [isMobile, setIsMobile] = useState(false);
 
-  // Detect mobile devices for performance optimization
+  // ✅ Load Cloudflare Turnstile script
+  useEffect(() => {
+    if (!document.querySelector('script[src*="challenges.cloudflare.com"]')) {
+      const script = document.createElement("script");
+      script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
+      script.async = true;
+      script.defer = true;
+      document.body.appendChild(script);
+    }
+  }, []);
+
+  // ✅ Detect mobile
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // Optimized page navigation with instant scroll
+  // ✅ Handle page transitions
   useEffect(() => {
     window.scrollTo(0, 0);
     document.documentElement.scrollTop = 0;
     document.body.scrollTop = 0;
-    
+
     setIsPageLoading(true);
     const timer = setTimeout(() => {
       setIsPageLoading(false);
     }, 300);
-    
+
     return () => clearTimeout(timer);
   }, [currentPage]);
 
-  // Order completion handler
   const handleOrderPlaced = (details: any) => {
     setOrderDetails(details);
     setCurrentPage("order-placed");
@@ -65,331 +74,160 @@ export default function App() {
   const renderPage = () => {
     switch (currentPage) {
       case "home":
-        return (
-          <div 
-            key="home"
-            className="min-h-screen pt-4"
-          >
-            <Hero 
-              onNavigate={setCurrentPage} 
-            />
-          </div>
-        );
+        return <Hero onNavigate={setCurrentPage} />;
       case "pricing":
-        return (
-          <div 
-            key="pricing"
-            className="min-h-screen pt-4"
-          >
-            <PricingGateway 
-              onNavigate={setCurrentPage}
-            />
-          </div>
-        );
+        return <PricingGateway onNavigate={setCurrentPage} />;
       case "pricing-minecraft":
         return (
-          <div 
-            key="pricing-minecraft"
-            className="min-h-screen pt-4"
-          >
-            <MinecraftPricing 
-              onNavigate={setCurrentPage}
-              onShowContactSales={() => setShowContactSales(true)}
-            />
-          </div>
+          <MinecraftPricing
+            onNavigate={setCurrentPage}
+            onShowContactSales={() => setShowContactSales(true)}
+          />
         );
       case "pricing-vps":
-        return (
-          <div 
-            key="pricing-vps"
-            className="min-h-screen pt-4"
-          >
-            <VPSPricing 
-              onNavigate={setCurrentPage}
-            />
-          </div>
-        );
+        return <VPSPricing onNavigate={setCurrentPage} />;
       case "pricing-bots":
         return (
-          <div 
-            key="pricing-bots"
-            className="min-h-screen pt-4"
-          >
-            <BotPricing 
-              onNavigate={setCurrentPage}
-              onShowContactSales={() => setShowContactSales(true)}
-            />
-          </div>
+          <BotPricing
+            onNavigate={setCurrentPage}
+            onShowContactSales={() => setShowContactSales(true)}
+          />
         );
       case "products":
-        return (
-          <div 
-            key="products"
-            className="min-h-screen pt-4"
-          >
-            <Products />
-          </div>
-        );
-
+        return <Products />;
       case "blog":
-        return (
-          <div 
-            key="blog"
-            className="min-h-screen pt-4"
-          >
-            <Blog />
-          </div>
-        );
+        return <Blog />;
       case "about":
-        return (
-          <div 
-            key="about"
-            className="min-h-screen pt-4"
-          >
-            <About />
-          </div>
-        );
+        return <About />;
       case "support":
-        return (
-          <div 
-            key="support"
-            className="min-h-screen pt-4"
-          >
-            <Support />
-          </div>
-        );
+        return <Support />;
       case "privacy-policy":
-        return (
-          <div 
-            key="privacy-policy"
-            className="min-h-screen pt-4"
-          >
-            <PrivacyPolicy />
-          </div>
-        );
+        return <PrivacyPolicy />;
       case "terms-of-service":
-        return (
-          <div 
-            key="terms-of-service"
-            className="min-h-screen pt-4"
-          >
-            <TermsOfService />
-          </div>
-        );
+        return <TermsOfService />;
       case "cookie-policy":
-        return (
-          <div 
-            key="cookie-policy"
-            className="min-h-screen pt-4"
-          >
-            <CookiePolicy />
-          </div>
-        );
+        return <CookiePolicy />;
       case "sla-agreement":
-        return (
-          <div 
-            key="sla-agreement"
-            className="min-h-screen pt-4"
-          >
-            <SLAAgreement />
-          </div>
-        );
+        return <SLAAgreement />;
       case "acceptable-use":
-        return (
-          <div 
-            key="acceptable-use"
-            className="min-h-screen pt-4"
-          >
-            <AcceptableUse />
-          </div>
-        );
+        return <AcceptableUse />;
       case "cart":
-        return (
-          <div 
-            key="cart"
-            className="min-h-screen pt-4"
-          >
-            <Cart onNavigate={setCurrentPage} />
-          </div>
-        );
+        return <Cart onNavigate={setCurrentPage} />;
       case "billing":
         return (
-          <div 
-            key="billing"
-            className="min-h-screen pt-4"
-          >
-            <Billing onNavigate={setCurrentPage} onOrderPlaced={handleOrderPlaced} />
-          </div>
+          <Billing
+            onNavigate={setCurrentPage}
+            onOrderPlaced={handleOrderPlaced}
+          />
         );
       case "order-placed":
         return (
-          <div 
-            key="order-placed"
-            className="min-h-screen"
-          >
-            <OrderPlaced 
-              onNavigate={setCurrentPage} 
-              orderDetails={orderDetails}
-            />
-          </div>
+          <OrderPlaced onNavigate={setCurrentPage} orderDetails={orderDetails} />
         );
       default:
-        return (
-          <div 
-            key="home"
-            className="min-h-screen"
-          >
-            <Hero 
-              onNavigate={setCurrentPage} 
-            />
-          </div>
-        );
+        return <Hero onNavigate={setCurrentPage} />;
     }
   };
 
+  const handleVerify = (e: React.FormEvent) => {
+    e.preventDefault();
+    alert("✅ Verified successfully!");
+  };
+
   return (
-      <CartProvider>
-        <MetaTags 
-          title="DishaGB Hosting - Premium Minecraft, Bot & VPS Hosting | 99.9% Uptime"
-          description="🚀 Best Minecraft & VPS Hosting in India | Starting ₹40/month | 24/7 Support | DDoS Protection | Instant Setup | Discord Bot Hosting | Game Servers | 99.9% Uptime Guarantee"
-        />
-        
-        {/* Fixed Header - Pinned at top */}
-        <Header 
-          onNavigate={setCurrentPage} 
-          currentPage={currentPage}
-        />
-        
-        <div className="min-h-screen relative z-content pt-20">
-          {/* Optimized Background - Simplified for performance */}
-          <div className="fixed inset-0 z-0 bg-gradient-to-b from-bg-primary via-bg-secondary to-bg-primary"></div>
-          
-          {/* Animated Background - Reduced on mobile */}
-          <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-            {/* Base gradient */}
-            <div className="absolute inset-0 bg-gradient-to-br from-primary-cyan/5 via-transparent to-primary-green/5"></div>
-            
-            {/* Animated grid - disabled on mobile for performance */}
-            {!isMobile && (
-              <div 
-                className="absolute inset-0 opacity-10"
-                style={{
-                  backgroundImage: `
-                    linear-gradient(rgba(0, 229, 255, 0.15) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(0, 255, 136, 0.15) 1px, transparent 1px)
-                  `,
-                  backgroundSize: '60px 60px',
-                  animation: 'grid-move 30s linear infinite'
-                }}
-              ></div>
-            )}
+    <CartProvider>
+      <MetaTags
+        title="DishaGB Hosting - Premium Minecraft, Bot & VPS Hosting | 99.9% Uptime"
+        description="🚀 Best Minecraft & VPS Hosting in India | Starting ₹40/month | 24/7 Support | DDoS Protection | Instant Setup | Discord Bot Hosting | Game Servers | 99.9% Uptime Guarantee"
+      />
 
-            {/* Reduced gradient orbs - only on desktop */}
-            {!isMobile && (
-              <>
-                <motion.div
-                  className="absolute top-1/4 left-1/4 w-80 h-80 bg-primary-cyan/10 rounded-full blur-3xl"
-                  animate={{
-                    x: [0, 80, 0],
-                    y: [0, -80, 0],
-                  }}
-                  transition={{
-                    duration: 20,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                />
-                <motion.div
-                  className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-primary-green/10 rounded-full blur-3xl"
-                  animate={{
-                    x: [0, -80, 0],
-                    y: [0, 80, 0],
-                  }}
-                  transition={{
-                    duration: 25,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                />
-              </>
-            )}
-          </div>
+      <Header onNavigate={setCurrentPage} currentPage={currentPage} />
 
-          {/* Minimal floating particles - reduced count, desktop only */}
-          {!isMobile && (
-            <div className="fixed inset-0 z-0 pointer-events-none">
-              <motion.div 
-                className="absolute top-20 left-[10%] w-2 h-2 bg-primary-cyan/40 rounded-full"
-                animate={{
-                  y: [-20, 20, -20],
-                  opacity: [0.2, 0.4, 0.2],
-                }}
-                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-              />
-              <motion.div 
-                className="absolute top-1/3 right-[15%] w-2 h-2 bg-primary-green/40 rounded-full"
-                animate={{
-                  y: [20, -20, 20],
-                  opacity: [0.2, 0.4, 0.2],
-                }}
-                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-              />
-              <motion.div 
-                className="absolute bottom-1/4 right-1/3 w-2 h-2 bg-primary-cyan/40 rounded-full"
-                animate={{
-                  y: [15, -15, 15],
-                  opacity: [0.2, 0.4, 0.2],
-                }}
-                transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-              />
-            </div>
-          )}
-              
-          <AnimatePresence mode="wait">
+      <div className="min-h-screen relative z-content pt-20">
+        {/* Animated Background */}
+        <div className="fixed inset-0 z-0 bg-gradient-to-b from-bg-primary via-bg-secondary to-bg-primary"></div>
+
+        {/* Content */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentPage}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+          >
+            {renderPage()}
+          </motion.div>
+        </AnimatePresence>
+
+        {/* 🧩 Cloudflare Turnstile Widget */}
+        <div
+          style={{
+            textAlign: "center",
+            margin: "50px auto",
+            padding: "20px",
+          }}
+        >
+          <form onSubmit={handleVerify}>
+            <div
+              className="cf-turnstile"
+              data-sitekey="0x4AAAAAAB7Ki5eNYbuZOeW_"
+            ></div>
+            <button
+              type="submit"
+              style={{
+                marginTop: "20px",
+                padding: "10px 20px",
+                background: "#00ff99",
+                border: "none",
+                borderRadius: "6px",
+                color: "#000",
+                fontWeight: "bold",
+                cursor: "pointer",
+              }}
+            >
+              Verify
+            </button>
+          </form>
+        </div>
+
+        {/* Footer */}
+        {currentPage !== "order-placed" && <Footer onNavigate={setCurrentPage} />}
+
+        {/* Page Loader */}
+        <AnimatePresence>
+          {isPageLoading && (
             <motion.div
-              key={currentPage}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
+              transition={{ duration: 0.15 }}
+              className="fixed inset-0 z-[9998] bg-bg-primary/90 backdrop-blur-sm flex items-center justify-center"
             >
-              {renderPage()}
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 bg-primary-cyan rounded-full animate-bounce"></div>
+                <div
+                  className="w-2 h-2 bg-primary-green rounded-full animate-bounce"
+                  style={{ animationDelay: "0.1s" }}
+                ></div>
+                <div
+                  className="w-2 h-2 bg-primary-cyan rounded-full animate-bounce"
+                  style={{ animationDelay: "0.2s" }}
+                ></div>
+              </div>
             </motion.div>
-          </AnimatePresence>
-
-          {/* Global Footer */}
-          {currentPage !== 'order-placed' && (
-            <Footer onNavigate={setCurrentPage} />
           )}
+        </AnimatePresence>
 
-          {/* Optimized Loading Indicator */}
-          <AnimatePresence>
-            {isPageLoading && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.15 }}
-                className="fixed inset-0 z-[9998] bg-bg-primary/90 backdrop-blur-sm flex items-center justify-center"
-              >
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-primary-cyan rounded-full animate-bounce"></div>
-                  <div className="w-2 h-2 bg-primary-green rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                  <div className="w-2 h-2 bg-primary-cyan rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+        {/* Contact Sales Modal */}
+        <ContactSalesModal
+          isOpen={showContactSales}
+          onClose={() => setShowContactSales(false)}
+        />
 
-          {/* Contact Sales Modal */}
-          <ContactSalesModal
-            isOpen={showContactSales}
-            onClose={() => setShowContactSales(false)}
-          />
-
-          {/* Toast Notifications */}
-          <Toaster />
-        </div>
-      </CartProvider>
+        {/* Toast Notifications */}
+        <Toaster />
+      </div>
+    </CartProvider>
   );
 }
