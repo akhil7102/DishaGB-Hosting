@@ -22,6 +22,7 @@ import { AcceptableUse } from "./pages/AcceptableUse";
 import { CartProvider } from "./components/CartContext";
 import { MetaTags } from "./components/MetaTags";
 import { ContactSalesModal } from "./components/ContactSalesModal";
+import { TurnstileWidget } from "./components/TurnstileWidget";
 
 import { Toaster } from "./components/ui/sonner";
 
@@ -31,6 +32,8 @@ export default function App() {
   const [showContactSales, setShowContactSales] = useState(false);
   const [orderDetails, setOrderDetails] = useState<any>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
+  const [verificationToken, setVerificationToken] = useState<string>("");
 
   // Detect mobile devices for performance optimization
   useEffect(() => {
@@ -56,10 +59,14 @@ export default function App() {
     return () => clearTimeout(timer);
   }, [currentPage]);
 
-  // Order completion handler
   const handleOrderPlaced = (details: any) => {
     setOrderDetails(details);
     setCurrentPage("order-placed");
+  };
+
+  const handleTurnstileVerify = (token: string) => {
+    setVerificationToken(token);
+    setIsVerified(true);
   };
 
   const renderPage = () => {
@@ -249,18 +256,53 @@ export default function App() {
 
   return (
       <CartProvider>
-        <MetaTags 
+        <MetaTags
           title="DishaGB Hosting - Premium Minecraft, Bot & VPS Hosting | 99.9% Uptime"
           description="🚀 Best Minecraft & VPS Hosting in India | Starting ₹40/month | 24/7 Support | DDoS Protection | Instant Setup | Discord Bot Hosting | Game Servers | 99.9% Uptime Guarantee"
         />
-        
-        {/* Fixed Header - Pinned at top */}
-        <Header 
-          onNavigate={setCurrentPage} 
-          currentPage={currentPage}
-        />
-        
-        <div className="min-h-screen relative z-content pt-20">
+
+        {!isVerified ? (
+          <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-8 shadow-2xl max-w-md w-full mx-4"
+            >
+              <div className="text-center mb-6">
+                <h2 className="text-2xl font-bold text-white mb-2">Security Verification</h2>
+                <p className="text-gray-400 text-sm">Please complete the verification below</p>
+              </div>
+
+              <TurnstileWidget
+                siteKey="0x4AAAAAAB7Ki5eNYbuZOeW_"
+                onVerify={handleTurnstileVerify}
+                theme="dark"
+                className="mb-6"
+              />
+
+              {isVerified && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="flex items-center justify-center gap-2 text-green-400 font-semibold"
+                >
+                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
+                  </svg>
+                  Verified
+                </motion.div>
+              )}
+            </motion.div>
+          </div>
+        ) : (
+          <>
+            <Header
+              onNavigate={setCurrentPage}
+              currentPage={currentPage}
+            />
+
+            <div className="min-h-screen relative z-content pt-20">
           {/* Optimized Background - Simplified for performance */}
           <div className="fixed inset-0 z-0 bg-gradient-to-b from-bg-primary via-bg-secondary to-bg-primary"></div>
           
@@ -390,6 +432,8 @@ export default function App() {
           {/* Toast Notifications */}
           <Toaster />
         </div>
+          </>
+        )}
       </CartProvider>
   );
 }
