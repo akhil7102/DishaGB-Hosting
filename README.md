@@ -35,7 +35,6 @@ The project is now lighter, faster, and more professional — ready for deployme
 |-------|------------------|-------------|
 | **Frontend** | Next.js (App Router) | Core UI framework for both user and admin sites |
 | **Backend / DB** | Supabase | Stores user accounts, billing details, and customer orders |
-| **Payment Gateway** | Razorpay | Handles all transactions and payment verification |
 | **UI Components** | Tailwind CSS + ShadCN UI | Responsive UI system with consistent design |
 | **Hosting** | Vercel / Tsuki Cloud | Frontend hosting with automatic builds |
 | **Version Control** | GitHub | Repository management and deployment tracking |
