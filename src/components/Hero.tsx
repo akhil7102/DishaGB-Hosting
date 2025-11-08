@@ -76,7 +76,7 @@ export function Hero({ onNavigate }: HeroProps) {
             </motion.button>
 
             <motion.button
-              onClick={() => window.open('https://panel.dishagb.shop/', '_blank')}
+              onClick={() => window.open('https://gp.dishagb.shop/', '_blank')}
               className="group px-8 py-4 bg-bg-card/80 backdrop-blur-sm text-white font-bold rounded-xl border-2 border-primary-green/40 hover:border-primary-green min-w-[200px] transition-all duration-300"
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
